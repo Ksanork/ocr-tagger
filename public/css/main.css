@@ -3,3 +3,37 @@ body {
   background-size: cover;
   background-attachment: fixed;
 }
+#logo {
+  margin-top: 80px;
+}
+#login-form {
+  margin: 0 auto;
+  margin-top: 80px;
+  background-image: url("../images/login-bg.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  width: 750px;
+  height: 345px;
+  padding: 100px;
+  vertical-align: middle;
+}
+#login-form label {
+  font-family: 'Montserrat', 'sans-serif';
+  font-size: 2em;
+  color: #1b8129;
+}
+#login-form div.row {
+  margin-bottom: 15px;
+}
+.green-button {
+  background-image: url("../images/button-bg.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  border: none;
+  padding: 10px;
+  padding-left: 70px;
+  padding-right: 70px;
+  font-size: 1.4em;
+  color: #fff;
+  font-family: 'Montserrat', 'sans-serif';
+}
