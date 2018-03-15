@@ -11,7 +11,7 @@
     "babel-preset-env": "^1.6.1"
   },
   "scripts": {
-    "start": "node dist/app.ja"
+    "start": "node ./dist/app.ja"
   },
   "repository": {
     "type": "git",
