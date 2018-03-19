@@ -1,0 +1,34 @@
+section#login-section
+    header.container-fluid
+        div#logo.text-center
+            img.img-responsive(src='images/logo.png')
+
+    main#main-containter.container-fluid
+        section#login-form.container
+            form
+                div.row
+                    div.col-xs-8.col-md-3
+                        label(for="inputLogin").control-label
+                            | Login
+                    div.col-xs-8.col-md-9
+                        input#inputLogin(type="text" required=true).form-control
+                div.row
+                    div.col-xs-8.col-md-3
+                        label(for="inputPassword").control-label
+                            | Hasło
+                    div.col-xs-8.col-md-9
+                        input#inputPassword(type="password" required=true).form-control
+                div.row
+                    div.col-md-12.text-center
+                        input#login-btn.green-button(type="submit" value="Zaloguj")
+                div.row
+                    div.col-md-12.text-center.register-text
+                        | Nie posiadasz konta? &nbsp;
+                        a#register-open(href="/register")
+                            | Zarejestruj się
+
+        aside#bad-loging.error
+            h4
+                | Nieprawidłowy login lub hasło
+
+    script(src="js/login.js")

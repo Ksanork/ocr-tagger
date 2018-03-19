@@ -6,7 +6,11 @@ body {
 #logo {
   margin-top: 80px;
 }
-#login-form {
+main {
+  text-align: center;
+}
+#login-form,
+#register-form {
   margin: 0 auto;
   margin-top: 80px;
   background-image: url("../images/login-bg.png");
@@ -15,14 +19,15 @@ body {
   width: 750px;
   height: 345px;
   padding: 100px;
-  vertical-align: middle;
+  padding-top: 80px;
+  vertical-align: bottom;
 }
-#login-form label {
+label {
   font-family: 'Montserrat', 'sans-serif';
-  font-size: 2em;
+  font-size: 1.8em;
   color: #1b8129;
 }
-#login-form div.row {
+div.row {
   margin-bottom: 15px;
 }
 .green-button {
@@ -36,4 +41,33 @@ body {
   font-size: 1.4em;
   color: #fff;
   font-family: 'Montserrat', 'sans-serif';
+  cursor: pointer;
+}
+.register-text {
+  font-family: 'Montserrat', 'sans-serif';
+}
+a {
+  color: #1b8129 !important;
+  font-weight: bold;
+  cursor: pointer;
+}
+#register-form {
+  padding-top: 60px;
+}
+#register-form label {
+  font-size: 1em;
+  text-align: right;
+}
+.error {
+  display: none;
+  margin-top: 20px;
+  background-color: #cd5c5c;
+  color: #fff;
+  padding: 5px;
+}
+.confirm {
+  margin-top: 80px;
+  color: #fff;
+  font-size: 3.4em;
+  opacity: 0.8;
 }

@@ -1,0 +1,44 @@
+section#login-section
+    header.container-fluid
+        div#logo.text-center
+            img.img-responsive(src='images/logo.png')
+
+    //main#main-containter.container-fluid
+    //    include register-confirm
+
+    main#main-containter.container-fluid
+        section#register-form.container
+            form
+                div.row
+                    div.col-xs-8.col-md-3
+                        label(for="inputRegisterLogin").control-label
+                            | Login
+                    div.col-xs-8.col-md-9
+                        input#inputRegisterLogin(type="text" required=true).form-control
+                div.row
+                    div.col-xs-8.col-md-3
+                        label(for="inputRegisterPassword").control-label
+                            | Hasło
+                    div.col-xs-8.col-md-9
+                        input#inputRegisterPassword(type="password" required=true).form-control
+                div.row
+                    div.col-xs-8.col-md-3
+                        label(for="inputRegisterPasswordAgain").control-label
+                            | Powtórz hasło
+                    div.col-xs-8.col-md-9
+                        input#inputRegisterPasswordAgain(type="password" required=true).form-control
+                div.row
+                    div.col-md-12.text-center
+                        input#register-btn.green-button(type="submit" value="Rejestruj")
+                div.row
+                    div.col-md-12.text-center.register-text
+                        | Posiadasz konto? &nbsp;
+                        a#register-open(href="/")
+                            | Zaloguj się
+
+        aside#bad-loging.error
+            h4#error-text
+                | Hasła się nie zgadzają
+
+block content-scripts
+    script(src="js/login.js")

@@ -1,0 +1,36 @@
+
+section#panel-section
+    header.container-fluid.panel-header
+        div.row
+            div.col-xs-16.col-md-10
+                img.img-responsive(src='images/logo-min.png')
+            div.col-xs-2.col-md-2.username-wrapper
+                img.user-portrait(src="images/user-portrait.png")
+                span.align-bottom.username= username
+
+    section.panel-content.container-fluid
+        div.content-wrapper.row
+            if isAdmin
+                section.datasets-wrapper.col-xs-12.col-sm-6.col-md-8
+                    h1.panel-title
+                        | Zbiory danych:
+                    div#datasets
+                       include datasets-partial
+                section.admins-wrapper.col-xs-6.col-md-4
+                    img#add-dataset-btn.panel-btn(src="images/add-dataset-btn.png")
+            else
+                section.datasets-wrapper
+                    h1.panel-title
+                        | Zbiory danych:
+                    div#datasets
+                        include datasets-partial
+
+
+aside#white-aside
+aside#black-dialog
+    h1#black-dialog-title
+        | Trwa dodawanie zbioru danych...
+    h2#black-dialog-desc
+        | 0 / 100 (0 %)
+
+script(src="js/panel.js")

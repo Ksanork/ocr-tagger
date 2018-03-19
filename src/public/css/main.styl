@@ -6,6 +6,9 @@ body
 #logo
   margin-top 80px
 
+main
+  text-align center
+
 #login-form
   margin 0 auto
   margin-top 80px
@@ -15,12 +18,13 @@ body
   width 750px
   height 345px
   padding 100px
-  vertical-align middle
-  //text-align center
+  padding-top 80px
+  vertical-align bottom
+//text-align center
 
   label
     font-family 'Montserrat', 'sans-serif'
-    font-size 2em
+    font-size 1.8em
     color #1b8129
 
   div.row
@@ -37,4 +41,35 @@ body
   font-size 1.4em
   color white
   font-family 'Montserrat', 'sans-serif'
+  cursor pointer
 
+
+.register-text
+  font-family 'Montserrat', 'sans-serif'
+
+a
+  color #1b8129 !important
+  font-weight bold
+  cursor pointer
+
+#register-form
+  @extend #login-form
+  padding-top 60px
+
+  label
+    font-size 1em
+    text-align right
+
+.error
+  display none
+  margin-top 20px
+  background-color indianred
+  color white
+  padding 5px
+
+.confirm
+  //font-family 'Montserrat', 'sans-serif'
+  margin-top 80px
+  color white
+  font-size 3.4em
+  opacity 0.8

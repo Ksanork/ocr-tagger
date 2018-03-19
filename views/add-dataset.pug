@@ -1,0 +1,28 @@
+form
+    div.row
+        h2.form-header
+            | Dodawanie zbioru danych
+    div.row
+        div.col-xs-8.col-md-3
+            label(for="inputDatasetName").control-label
+                | Nazwa zbioru danych
+        div.col-xs-8.col-md-9
+            input#inputDatasetName(type="text" required=true).form-control
+    div.row
+        div.col-xs-8.col-md-3
+            label(for="inputDatasetDesc").control-label
+                | Opis zbioru
+        div.col-xs-8.col-md-9
+            input#inputDatasetDesc(type="text" required=true).form-control
+    div.row
+        div.col-md-12.text-center
+            div#fileuploader
+            div#form-dataset-count-wrapper
+                span#form-dataset-count-pre
+                    | Obrazów:&nbsp;
+                span#form-dataset-count
+                    | 0
+    div.row
+        div.col-md-12.text-center
+            input#form-dataset-btn.green-button(type="submit" value="Dodaj zbiór danych")
+    img#close-form-button(src="images/close-button.png")

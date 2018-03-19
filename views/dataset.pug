@@ -1,0 +1,9 @@
+mixin dataset(id, name, taggedCount, count)
+    div.dataset.panel-btn(attr-id= id)
+        div.dataset-info
+            h2.dataset-title= name
+                br
+                span.dataset-count
+                    = taggedCount
+                    | &nbsp;/&nbsp;
+                    = count

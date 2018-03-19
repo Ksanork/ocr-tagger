@@ -1,0 +1,149 @@
+#panel-section {
+  padding: 20px 50px 0 50px;
+}
+.panel-header {
+  margin-top: 30px;
+}
+.username-wrapper {
+  transform: translateY(50%);
+}
+.user-portrait {
+  float: left;
+  vertical-align: bottom;
+  margin-right: 10px;
+}
+.username {
+  font-family: 'Montserrat', 'sans-serif';
+  color: #fff;
+  font-size: 1.7em;
+  text-transform: uppercase;
+  line-height: 2;
+}
+.panel-content {
+  margin: 0 auto;
+  margin-top: 30px;
+  background-color: rgba(255,255,255,0.05);
+  width: 1472px;
+  min-height: 600px;
+  padding: 100px;
+  padding-top: 60px;
+  vertical-align: middle;
+  -webkit-border-radius: 25px;
+  -moz-border-radius: 25px;
+  border-radius: 25px;
+}
+.content-wrapper {
+  padding: 30px;
+  padding-top: 0;
+}
+.panel-title {
+  color: #fff;
+  font-family: 'Nunito', sans-serif;
+  font-weight: normal;
+}
+div.dataset {
+  font-family: 'Kanit', sans-serif;
+  background-image: url("../images/dataset-bg.png");
+  background-repeat: no-repeat;
+  display: inline-block;
+  min-height: 190px;
+}
+.dataset-info {
+  display: inline-block;
+  vertical-align: bottom;
+  margin-top: 50px;
+  margin-left: 90px;
+}
+.dataset-info > * {
+  font-size: 2.2em;
+}
+.dataset-title {
+  color: #fff;
+}
+.dataset-count {
+  color: #6aff76;
+}
+.panel-btn {
+  cursor: pointer;
+  transform: scale(1);
+  transition: transform 300ms;
+}
+.panel-btn:hover {
+  transform: scale(1.1);
+}
+#white-aside {
+  display: none;
+  background-color: #fff;
+  position: absolute;
+  top: 100px;
+  left: 50%;
+  transform: translate(-50%, 0%);
+  width: 90%;
+  min-height: 450px;
+  -webkit-border-radius: 25px;
+  -moz-border-radius: 25px;
+  border-radius: 25px;
+  padding: 50px;
+}
+#white-aside label {
+  font-size: 1.3em;
+}
+.form-header {
+  font-family: 'Kanit', sans-serif;
+  color: #8fdf5b;
+}
+.ajax-file-upload-statusbar {
+  display: inline-block;
+}
+.ajax-file-upload-preview {
+  max-width: 200px !important;
+  height: 100px !important;
+}
+.ajax-file-upload-container {
+  max-height: 1000px;
+  overflow: scroll;
+}
+#form-dataset-count-wrapper {
+  font-family: 'Montserrat' 'sans-serif';
+  font-size: 1.8em;
+  color: #1b8129;
+}
+#black-dialog {
+  display: none;
+  background-image: url("../images/black-dialog-bg.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, 0%);
+  width: 672px;
+  height: 258px;
+  z-index: 10;
+  font-family: 'Montserrat' 'sans-serif';
+  padding: 10px;
+  padding-top: 80px;
+}
+#black-dialog h1#black-dialog-title {
+  color: #7ad11e;
+  text-align: center;
+}
+#black-dialog h2#black-dialog-desc {
+  color: #fff;
+  text-align: center;
+}
+#close-form-button {
+  cursor: pointer;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+.tagging-form {
+  height: 750px;
+}
+.tagging-dataset {
+  color: #1b8129;
+}
+.tagging-counts {
+  color: #6aff76;
+}

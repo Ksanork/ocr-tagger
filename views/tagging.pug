@@ -1,0 +1,19 @@
+form
+    div.row
+        h2.form-header
+            | Zbiór danych:&nbsp;
+            span.tagging-dataset= dataset
+            span.tagging-counts
+                | &nbsp;(#{countTagged} / #{countAll})
+    div.row
+        div.col-md-12.text-center
+            img#tagging-image(src= path)
+    div.row
+        div.col-md-12.text-center
+            input#inputTag(type="text" required=true).form-control
+    div.row
+        div.col-md-12.text-center
+            input#tagging-submit-btn.green-button(type="submit" value="Dodaj tag")
+            input#tagging-id(type="hidden" value= datasetImage_id)
+
+    img#close-form-button(src="images/close-button.png")

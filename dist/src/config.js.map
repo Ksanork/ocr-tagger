@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../src/config.js"],"names":["config"],"mappings":";;;;;AAAA,IAAMA,SAAS;AACX,iBAAa;AADF,CAAf;;kBAIeA,M","file":"config.js","sourcesContent":["const config = {\r\n    'mongo_url': \"mongodb://localhost:27017/dataset_tagger\"\r\n};\r\n\r\nexport default config;"]}
