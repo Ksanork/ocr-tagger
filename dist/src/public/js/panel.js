@@ -33,9 +33,9 @@ $(function () {
                 uploadStr: "Dodaj obrazy",
                 cancelStr: "Usuń",
                 doneStr: "Wysłany",
-
+                sequential: true,
                 showFileCounter: true,
-                showPreview: true,
+                // showPreview:true,
                 autoSubmit: false,
                 acceptFiles: "image/*",
                 dynamicFormData: function dynamicFormData() {
