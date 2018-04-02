@@ -1,5 +1,5 @@
 const config = {
-    'mongo_url': "mongodb://mo1162_dev_dt:m99NlZTXoTpC5BjfWH34@mongo23.mydevil.net:27017/mo1162_dev_dt",
+    'mongo_url': "mongodb://localhost:27017/dataset_tagger"
 };
 
 export default config;

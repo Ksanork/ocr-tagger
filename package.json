@@ -10,7 +10,8 @@
     "body-parser": "latest",
     "express-session": "latest",
     "mongoose": "latest",
-    "bcrypt": "latest"
+    "bcrypt": "latest",
+    "stylus": "latest"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
