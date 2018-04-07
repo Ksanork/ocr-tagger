@@ -15,5 +15,13 @@ form
         div.col-md-12.text-center
             input#tagging-submit-btn.green-button(type="submit" value="Dodaj tag")
             input#tagging-id(type="hidden" value= datasetImage_id)
+    div.row
+        div.col-md-12.text-center
+            each p in problems
+                input#tagging-problem1-btn.green-button.green-problem-button(type="button" value= p.name attr-id= p._id)
+
+            //input#tagging-problem1-btn.green-button.green-problem-button(type="button" value="Zgłoś nieczytelne zdjęcie")
+            //input#tagging-problem2-btn.green-button.green-problem-button(type="button" value="Zgłoś źle przycięte zdjęcie")
+            //input#tagging-problem3-btn.green-button.green-problem-button(type="button" value="Zgłoś niepasujące zdjęcie")
 
     img#close-form-button(src="images/close-button.png")

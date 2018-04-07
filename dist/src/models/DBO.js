@@ -10,6 +10,10 @@ var _mongoose = require('mongoose');
 
 var _mongoose2 = _interopRequireDefault(_mongoose);
 
+var _bcrypt = require('bcrypt');
+
+var _bcrypt2 = _interopRequireDefault(_bcrypt);
+
 var _UserSchema = require('./schemas/UserSchema');
 
 var _UserSchema2 = _interopRequireDefault(_UserSchema);
@@ -22,9 +26,9 @@ var _DatasetImageSchema = require('./schemas/DatasetImageSchema');
 
 var _DatasetImageSchema2 = _interopRequireDefault(_DatasetImageSchema);
 
-var _bcrypt = require('bcrypt');
+var _ProblemSchema = require('./schemas/ProblemSchema');
 
-var _bcrypt2 = _interopRequireDefault(_bcrypt);
+var _ProblemSchema2 = _interopRequireDefault(_ProblemSchema);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -46,9 +50,10 @@ var DBO = function () {
                 password: password,
                 isAdmin: isAdmin
             }, function (err, user) {
+
                 // console.log("callback");
                 if (err) {
-                    console.log("add user - error");
+                    console.log("add user - error " + err);
                     callback(false);
                 } else {
                     console.log("Dodano usera - " + user.name);
@@ -178,6 +183,44 @@ var DBO = function () {
                 if (err) {
                     callback(false);
                 } else callback(true);
+            });
+        }
+    }, {
+        key: 'addProblem',
+        value: function addProblem(datasetImage_id, user_id, problem, callback) {
+            _DatasetImageSchema2.default.update({
+                _id: datasetImage_id
+            }, {
+                problem: problem,
+                taggedBy: user_id
+            }, function (err, raw) {
+                if (err) {
+                    callback(false);
+                } else callback(true);
+            });
+        }
+    }, {
+        key: 'addNewProblem',
+        value: function addNewProblem(problem, name, callback) {
+            _ProblemSchema2.default.create({
+                description: problem,
+                name: name
+            }, function (err, raw) {
+                if (err) {
+                    callback(false);
+                } else {
+                    console.log("Dodano problem - " + name);
+                    callback(true);
+                }
+            });
+        }
+    }, {
+        key: 'getProblems',
+        value: function getProblems(callback) {
+            _ProblemSchema2.default.find({}, function (err, problems) {
+                if (err) console.log("problem z pobieraniem problemów");else {
+                    callback(problems);
+                }
             });
         }
     }, {
@@ -313,6 +356,13 @@ var DBO = function () {
             _DatasetImageSchema2.default.remove({}, function (err) {
                 if (err) console.log("problem z usuwaniem");else {
                     console.log("usuwanie obrazów ok");
+                    callback();
+                }
+            });
+
+            _ProblemSchema2.default.remove({}, function (err) {
+                if (err) console.log("problem z usuwaniem");else {
+                    console.log("usuwanie problemów ok");
                     callback();
                 }
             });

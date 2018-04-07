@@ -32,6 +32,7 @@ $(function () {
 
     initDatasetButtonsEvents();
 
+    // obsługa dodawania datasetu
     $("#add-dataset-btn").click(function () {
         $.post("/open-add-dataset").done(function (data) {
             console.log(data);
@@ -39,6 +40,8 @@ $(function () {
             var json = JSON.parse(data);
 
             if ($("#white-aside").hasClass("tagging-form")) $("#white-aside").removeClass("tagging-form");
+
+            if (!$("#white-aside").hasClass("add-form")) $("#white-aside").addClass("add-form");
 
             $("#white-aside").html(json.html);
             $("#white-aside").fadeIn(200);
@@ -159,12 +162,13 @@ function startTagging(dataset_id) {
 
         var json = JSON.parse(data);
 
-        console.log(json.html);
-
         if (!$("#white-aside").hasClass("tagging-form")) $("#white-aside").addClass("tagging-form");
+
+        if ($("#white-aside").hasClass("add-form")) $("#white-aside").removeClass("add-form");
 
         $("#white-aside").html(json.html);
 
+        // otwieranie okna i dopasowanie obrazu
         $("#white-aside").fadeIn(200, function () {
             var img = new Image();
             var parentWidth = $("#white-aside").width() * 0.75;
@@ -177,23 +181,32 @@ function startTagging(dataset_id) {
 
             if (json.width < json.height) {
                 $(img).height(parentHeight);
-
-                // if(json.width > parentWidth)
             } else {
-                console.log("!");
                 console.log(parentWidth * json.width / json.height);
                 if (parentWidth * json.width / json.height > json.height) $(img).height(parentHeight);else $(img).width(parentWidth);
-                // }
             }
-            // });
             img.src = json.src;
 
             $("#image-wrapper").append(img);
-            // $(img).animate({
-            //     opacity: 1.0
-            // }, 300);
+            $("#inputTag").focus();
         });
 
+        // obsługa przycisków zgłaszajacych problemy
+        $(".green-problem-button").each(function (idx, elem) {
+            $(elem).click(function () {
+                $.post("/add-problem", {
+                    datasetImage_id: $("#tagging-id").val(),
+                    problem_id: $(elem).attr("attr-id")
+                }).done(function (data) {
+                    if (data == "true") {
+                        console.log("Dodanto problem");
+                        startTagging(dataset_id);
+                    }
+                });
+            });
+        });
+
+        // obsługa przycisku dodawania tagu
         $("#tagging-submit-btn").click(function (event) {
             event.preventDefault();
 
@@ -208,6 +221,7 @@ function startTagging(dataset_id) {
             });
         });
 
+        // obsługa zamknięcia okna
         $("#close-form-button").click(function () {
             $("#white-aside").fadeOut(200);
             refreshDatasets();

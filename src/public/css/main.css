@@ -43,6 +43,12 @@ div.row {
   font-family: 'Montserrat', 'sans-serif';
   cursor: pointer;
 }
+.green-problem-button {
+  background-image: url("../images/button-problem-bg.png");
+  padding-left: 40px;
+  padding-right: 40px;
+  font-size: 1em;
+}
 .register-text {
   font-family: 'Montserrat', 'sans-serif';
 }

@@ -1,8 +1,10 @@
 import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
+
 import User from './schemas/UserSchema';
 import Dataset from './schemas/DatasetSchema';
 import DatasetImage from './schemas/DatasetImageSchema';
-import bcrypt from 'bcrypt';
+import Problem from './schemas/ProblemSchema';
 
 export default class DBO {
     constructor(url) {
@@ -16,9 +18,10 @@ export default class DBO {
             password: password,
             isAdmin: isAdmin
         }, (err, user) => {
+
             // console.log("callback");
             if(err) {
-                console.log("add user - error");
+                console.log("add user - error " + err);
                 callback(false);
             }
             else {
@@ -160,6 +163,46 @@ export default class DBO {
             }
             else callback(true);
         })
+    }
+
+    addProblem(datasetImage_id, user_id, problem, callback) {
+        DatasetImage.update({
+            _id: datasetImage_id
+        }, {
+            problem: problem,
+            taggedBy: user_id
+        }, (err, raw) => {
+            if(err) {
+                callback(false);
+            }
+            else callback(true);
+        })
+    }
+
+    addNewProblem(problem, name, callback) {
+        Problem.create({
+            description: problem,
+            name: name
+        }, (err, raw) => {
+            if(err) {
+                callback(false);
+            }
+            else  {
+                console.log("Dodano problem - " + name);
+                callback(true);
+            }
+        })
+    }
+
+    getProblems(callback) {
+        Problem.find({}, (err, problems) => {
+            if(err)
+                console.log("problem z pobieraniem problemów");
+            else {
+                callback(problems);
+            }
+        });
+
     }
 
     getOneDatasetsWithCounts(dataset_id, callback) {
@@ -305,6 +348,16 @@ export default class DBO {
                 console.log("problem z usuwaniem");
             else {
                 console.log("usuwanie obrazów ok");
+                callback();
+            }
+
+        });
+
+        Problem.remove({}, (err) => {
+            if(err)
+                console.log("problem z usuwaniem");
+            else {
+                console.log("usuwanie problemów ok");
                 callback();
             }
 

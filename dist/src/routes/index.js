@@ -50,19 +50,9 @@ var upload = (0, _multer2.default)({
 
 var authorise = function authorise(req, res, next) {
     if (req.session.auth && req.session.authUser) {
-
-        // let datasets =  dbo.getDatasetsWithCounts2();
-
         dbo.getDatasetsWithCounts(function (datasets) {
-            datasets.forEach(function (elem) {
-                console.log("get " + elem.countTagged + " / " + elem.countAll);
-            });
-
             res.render('panel', { username: req.session.authUser, isAdmin: req.session.isAdmin, datasets: datasets });
         });
-
-        // next();
-        // res.render("panel", { username: req.session.authUser, isAdmin: req.session.isAdmin });
     } else {
         next();
     }
@@ -87,10 +77,6 @@ router.post("/login", authorise, function (req, res, next) {
             console.log("auth ok - " + req.session.authUser);
 
             dbo.getDatasetsWithCounts(function (datasets) {
-                datasets.forEach(function (elem) {
-                    console.log("get " + elem.countTagged + " / " + elem.countAll);
-                });
-
                 res.render('panel-partial', { username: user.name, isAdmin: user.isAdmin, datasets: datasets }, function (err, output) {
                     console.log("res");
                     res.json(JSON.stringify({ status: "true", html: output }));
@@ -170,13 +156,7 @@ router.post("/add-dataset-image", function (req, res) {
 
 router.post("/get-datasets", function (req, res) {
     dbo.getDatasetsWithCounts(function (datasets) {
-        datasets.forEach(function (elem) {
-            console.log("get " + elem.countTagged + " / " + elem.countAll);
-        });
-
         res.render('datasets-partial', { datasets: datasets }, function (err, output) {
-            // console.log("get " + da)
-
             res.json(JSON.stringify({ html: output }));
         });
     });
@@ -188,16 +168,19 @@ router.post("/get-dataset-image", function (req, res) {
             console.log("koniec datasetu");
             res.sendStatus(404);
         } else {
-            dbo.getOneDatasetsWithCounts(req.body.dataset_id, function (dataset) {
-                res.render('tagging', {
-                    dataset: dataset.name,
-                    datasetImage_id: datasetImage._id,
-                    path: datasetImage.path,
-                    countTagged: dataset.countTagged,
-                    countAll: dataset.countAll
-                }, function (err, output) {
-                    res.json(JSON.stringify({ src: datasetImage.path, width: datasetImage.width,
-                        height: datasetImage.height, html: output }));
+            dbo.getProblems(function (problems) {
+                dbo.getOneDatasetsWithCounts(req.body.dataset_id, function (dataset) {
+                    res.render('tagging', {
+                        dataset: dataset.name,
+                        datasetImage_id: datasetImage._id,
+                        path: datasetImage.path,
+                        countTagged: dataset.countTagged,
+                        countAll: dataset.countAll,
+                        problems: problems
+                    }, function (err, output) {
+                        res.json(JSON.stringify({ src: datasetImage.path, width: datasetImage.width,
+                            height: datasetImage.height, html: output }));
+                    });
                 });
             });
         }
@@ -207,6 +190,12 @@ router.post("/get-dataset-image", function (req, res) {
 // sprawdzać czy jest już otagowany
 router.post("/add-tag", function (req, res) {
     dbo.addTag(req.body.datasetImage_id, req.session.userId, req.body.tag, function (status) {
+        if (status) res.send("true");
+    });
+});
+
+router.post("/add-problem", function (req, res) {
+    dbo.addProblem(req.body.datasetImage_id, req.session.userId, req.body.problem_id, function (status) {
         if (status) res.send("true");
     });
 });
