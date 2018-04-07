@@ -1,5 +1,5 @@
 mixin dataset(id, name, taggedCount, count)
-    div.dataset.panel-btn(attr-id= id)
+    div(class=(taggedCount == count) ? 'dataset-done' : 'dataset panel-btn' attr-id= id)
         div.dataset-info
             h2.dataset-title= name
                 br

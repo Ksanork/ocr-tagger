@@ -4,13 +4,17 @@
 .panel-header
   margin-top 30px
 
-.username-wrapper
-  transform: translateY(50%)
+#username-wrapper
+  transform translateY(50%)
+
+  z-index 5
 
 .user-portrait
   float left
   vertical-align bottom
   margin-right 10px
+  cursor pointer
+
 
 .username
   font-family 'Montserrat', 'sans-serif'
@@ -28,7 +32,7 @@
   //background-size cover
   //background-repeat no-repeat
   width 1472px
-  min-height 600px
+  min-height 75vh
   padding 100px
   padding-top 60px
   vertical-align middle
@@ -53,6 +57,15 @@ div.dataset
   //background-position 0 0
   min-height 190px
 
+div.dataset-done
+  font-family 'Kanit', sans-serif
+  background-image url("../images/dataset-done-bg.png")
+  background-repeat no-repeat
+  display inline-block
+  min-height 190px
+
+  opacity 0.5
+
 .dataset-info
   display inline-block
   vertical-align bottom
@@ -74,6 +87,8 @@ div.dataset
   transform scale(1.0)
   transition transform 300ms
 
+  z-index 2
+
 .panel-btn:hover
   transform scale(1.1)
 
@@ -92,6 +107,8 @@ div.dataset
   border-radius 25px
 
   padding 50px
+
+  z-index 10
 
   label
     font-size 1.3em
@@ -123,6 +140,7 @@ div.dataset
   background-repeat no-repeat
   background-size cover
 
+  z-index 10
   position fixed
   top: 20%
   left: 50%;
@@ -151,6 +169,16 @@ div.dataset
   top 20px
   right 20px
 
+#image-wrapper
+  height 485px
+  overflow hidden
+
+  img
+    max-width inherit
+//opacity 0.0
+//display none
+
+
 .tagging-form
   height 750px
 
@@ -159,3 +187,43 @@ div.dataset
 
 .tagging-counts
   color #6aff76
+
+#user-settings
+  display none
+
+  background-image url("../images/mini-black-dialog-bg.png")
+  background-size cover
+  background-repeat no-repeat
+
+  width 306px
+  height 190px
+
+  position fixed
+  right 25px
+  top 50px
+
+  z-index 5
+
+  ul
+    margin-top 40px
+    list-style none
+    color white
+    font-size 1.5em
+    margin-left 0
+    padding-left 0
+
+    li
+      padding 10px
+      padding-left 30px
+
+      font-family: 'Kanit', cursive;
+      margin-left 0
+      background-color none
+
+      cursor pointer
+
+      transition background-color 300ms
+
+    li:hover
+      background-color #006a0a
+

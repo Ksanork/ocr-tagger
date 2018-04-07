@@ -1,12 +1,14 @@
 import express from 'express';
 import multer from 'multer';
 import fs from 'fs';
+import sizeOf from 'image-size';
 
 import DBO from '../models/DBO'
 import config from '../config'
 
 let router = express.Router();
 let dbo = new DBO(config.mongo_url);
+
 
 let Storage = multer.diskStorage({
     destination: function(req, file, callback) {
@@ -27,11 +29,21 @@ let upload = multer({
 
 let authorise = function(req, res, next) {
     if(req.session.auth && req.session.authUser) {
+
+
+        // let datasets =  dbo.getDatasetsWithCounts2();
+
         dbo.getDatasetsWithCounts((datasets) => {
+            datasets.forEach((elem) => {
+                console.log("get " + elem.countTagged + " / " + elem.countAll);
+            });
+
             res.render('panel', { username: req.session.authUser, isAdmin: req.session.isAdmin, datasets: datasets});
         });
+
+
         // next();
-       // res.render("panel", { username: req.session.authUser, isAdmin: req.session.isAdmin });
+        // res.render("panel", { username: req.session.authUser, isAdmin: req.session.isAdmin });
     }
     else {
         next();
@@ -48,40 +60,44 @@ router.get('/register', authorise, (req, res) => {
 
 router.post("/login", authorise, (req, res, next) => {
     if(dbo.checkAuth(req.body.name, req.body.password, (status, user) => {
-        if(status) {
-            req.session.auth = true;
-            req.session.authUser = user.name;
-            req.session.isAdmin = user.isAdmin;
-            req.session.userId = user._id;
+            if(status) {
+                req.session.auth = true;
+                req.session.authUser = user.name;
+                req.session.isAdmin = user.isAdmin;
+                req.session.userId = user._id;
 
-            console.log("auth ok - " + req.session.authUser);
+                console.log("auth ok - " + req.session.authUser);
 
-            dbo.getDatasetsWithCounts((datasets) => {
-                res.render('panel-partial', { username: user.name, isAdmin: user.isAdmin, datasets: datasets},
-                    function (err, output) {
-                        console.log("res");
-                        res.json(JSON.stringify({ status: "true", html: output }));
+                dbo.getDatasetsWithCounts((datasets) => {
+                    datasets.forEach((elem) => {
+                        console.log("get " + elem.countTagged + " / " + elem.countAll);
                     });
-            });
-        }
-        else {
-            res.json(JSON.stringify({status: "false"}));
-        }
-    }));
+
+                    res.render('panel-partial', { username: user.name, isAdmin: user.isAdmin, datasets: datasets},
+                        function (err, output) {
+                            console.log("res");
+                            res.json(JSON.stringify({ status: "true", html: output }));
+                        });
+                });
+            }
+            else {
+                res.json(JSON.stringify({status: "false"}));
+            }
+        }));
 });
 
 router.post("/new-register", authorise, (req, res, next) => {
     dbo.checkIfUserExists(req.body.name, (result) => {
-       if(!result) {
-           dbo.addUser(req.body.name, req.body.password, false, (status) => {
-               res.render('register-confirm', { status: status }, (err, output) => {
-                   res.json(JSON.stringify({ html: output }));
-               });
-           });
-       }
-       else {
-           res.json(JSON.stringify({ status: "user-exists", html: null }));
-       }
+        if(!result) {
+            dbo.addUser(req.body.name, req.body.password, false, (status) => {
+                res.render('register-confirm', { status: status }, (err, output) => {
+                    res.json(JSON.stringify({ html: output }));
+                });
+            });
+        }
+        else {
+            res.json(JSON.stringify({ status: "user-exists", html: null }));
+        }
     });
 });
 
@@ -100,9 +116,9 @@ router.post('/open-add-dataset', (req, res) => {
 
 router.post('/add-dataset', (req, res) => {
     dbo.addDataset(req.body.name, req.body.desc, (status, dataset) => {
-       if(status) {
-           res.json(JSON.stringify({ status: "true", dataset_id: dataset._id}));
-       }
+        if(status) {
+            res.json(JSON.stringify({ status: "true", dataset_id: dataset._id}));
+        }
     });
 });
 
@@ -117,22 +133,43 @@ router.post("/add-dataset-image", (req, res) =>  {
                 fs.mkdirSync(path);
             }
 
-            console.log(req.file.path + " => " + path + " - " + req.file.filename);
+            sizeOf(req.file.path, (err, size) => {
+                if (!err) {
+                    console.log('width = ' + size.width);
+                    console.log('height = ' + size.height);
 
-            fs.rename(req.file.path, path + "/" + req.file.filename, (err) => {
-                if(err) throw err;
-                else console.log('Successfully moved');
+                    console.log(req.file.path + " => " + path + " - " + req.file.filename);
+
+                    fs.rename(req.file.path, path + "/" + req.file.filename, (err) => {
+                        if(err) throw err;
+                        else console.log('Successfully moved');
+                    });
+
+                    dbo.addDatasetImage(path + "/" + req.file.filename, req.body.dataset_id,
+                        size.width, size.height, (status) => {});
+
+
+                    res.sendStatus(200);
+
+                } else {
+                    console.log("Problem z określaniem rozmiaru - " + err);
+                }
             });
 
-            dbo.addDatasetImage(path + "/" + req.file.filename, req.body.dataset_id, (status) => {})
-            res.sendStatus(200);
+
         }
     });
 });
 
 router.post("/get-datasets", (req, res) => {
     dbo.getDatasetsWithCounts((datasets) => {
+        datasets.forEach((elem) => {
+            console.log("get " + elem.countTagged + " / " + elem.countAll);
+        });
+
         res.render('datasets-partial', { datasets: datasets }, (err, output) => {
+            // console.log("get " + da)
+
             res.json(JSON.stringify({ html: output }));
         });
     });
@@ -140,25 +177,44 @@ router.post("/get-datasets", (req, res) => {
 
 router.post("/get-dataset-image", (req, res) => {
     dbo.getNextDatasetImage(req.body.dataset_id, (datasetImage) => {
-        dbo.getOneDatasetsWithCounts(req.body.dataset_id, (dataset) => {
-            res.render('tagging', {
-                dataset: dataset.name,
-                datasetImage_id: datasetImage._id,
-                path: datasetImage.path,
-                countTagged: dataset.countTagged,
-                countAll: dataset.countAll
-            }, (err, output) => {
-                res.json(JSON.stringify({ html: output }));
+        if(datasetImage == null) {
+            console.log("koniec datasetu");
+            res.sendStatus(404);
+        }
+        else {
+            dbo.getOneDatasetsWithCounts(req.body.dataset_id, (dataset) => {
+                res.render('tagging', {
+                    dataset: dataset.name,
+                    datasetImage_id: datasetImage._id,
+                    path: datasetImage.path,
+                    countTagged: dataset.countTagged,
+                    countAll: dataset.countAll
+                }, (err, output) => {
+                    res.json(JSON.stringify({ src: datasetImage.path, width: datasetImage.width,
+                        height: datasetImage.height, html: output }));
+                });
             });
-        });
+        }
+
     });
 });
 
+// sprawdzać czy jest już otagowany
 router.post("/add-tag", (req, res) => {
     dbo.addTag(req.body.datasetImage_id, req.session.userId, req.body.tag, (status) => {
-       if(status)
-           res.send("true");
+        if(status)
+            res.send("true");
     });
 });
+
+router.post("/logout", (req, res) => {
+    console.log("logout");
+
+    req.session.destroy();
+    res.render('login-partial', (err, output) => {
+        res.json(JSON.stringify({ status: "true", html: output }));
+    });
+});
+
 
 export default router;

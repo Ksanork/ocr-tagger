@@ -75,10 +75,12 @@ var DBO = function () {
         }
     }, {
         key: 'addDatasetImage',
-        value: function addDatasetImage(path, dataset_id, callback) {
+        value: function addDatasetImage(path, dataset_id, width, height, callback) {
             _DatasetImageSchema2.default.create({
                 path: path,
-                dataset: dataset_id
+                dataset: dataset_id,
+                width: width,
+                height: height
             }, function (err, user) {
                 // console.log("callback");
                 if (err) {
@@ -91,17 +93,47 @@ var DBO = function () {
             });
         }
     }, {
+        key: 'getDatasetsWithCounts2',
+        value: function getDatasetsWithCounts2(callback) {
+            var that = this;
+            _DatasetSchema2.default.find({}, function (err, datasets) {
+                if (err) console.log("problem z getDatasets2");else {
+                    console.log("------ get datasets2 ---");
+
+                    // let di = [];
+
+
+                    console.log("length " + datasets.length);
+                    var j = 0;
+
+                    datasets.forEach(function (dataset, i) {
+                        that.getOneDatasetsWithCounts(dataset._id, function (dataset) {
+                            j++;
+                            if (j == datasets.length - 1) callback(datasets);
+                        });
+                    });
+                }
+            });
+        }
+    }, {
         key: 'getDatasetsWithCounts',
         value: function getDatasetsWithCounts(callback) {
             var that = this;
             _DatasetSchema2.default.find({}, function (err, datasets) {
                 if (err) console.log("problem z getDatasets");else {
-                    // console.log(datasets);
+                    console.log("------ get datasets ---");
+
+                    var di = [];
+
+                    console.log("length " + datasets.length);
 
                     if (datasets.length == 0) {
+                        console.log("callback 1");
                         callback(datasets);
                         return;
                     }
+
+                    var j = 0;
                     datasets.forEach(function (dataset, i) {
                         var all = 0,
                             tagged = 0;
@@ -113,10 +145,20 @@ var DBO = function () {
                             that.getTaggedCountsOfDataset(dataset._id, function (count) {
                                 tagged = count;
 
+                                di.push({
+                                    countAll: all,
+                                    countTagged: tagged
+                                });
+
                                 dataset.countAll = all;
                                 dataset.countTagged = tagged;
 
-                                if (i == datasets.length - 1) callback(datasets);
+                                if (j++ == datasets.length - 1) {
+                                    console.log("callback 2");
+
+                                    callback(datasets);
+                                    return;
+                                }
                                 console.log(dataset.name + " - " + tagged + "/" + all);
                             });
                         });

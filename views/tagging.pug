@@ -6,8 +6,8 @@ form
             span.tagging-counts
                 | &nbsp;(#{countTagged} / #{countAll})
     div.row
-        div.col-md-12.text-center
-            img#tagging-image(src= path)
+        div.col-md-12.text-center#image-wrapper
+            //img#tagging-image.tagging(src= path)
     div.row
         div.col-md-12.text-center
             input#inputTag(type="text" required=true).form-control

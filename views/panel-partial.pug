@@ -4,9 +4,15 @@ section#panel-section
         div.row
             div.col-xs-16.col-md-10
                 img.img-responsive(src='images/logo-min.png')
-            div.col-xs-2.col-md-2.username-wrapper
+            div.col-xs-2.col-md-2#username-wrapper
                 img.user-portrait(src="images/user-portrait.png")
                 span.align-bottom.username= username
+                aside#user-settings
+                    ul
+                        li#change-password-btn
+                            | Zmiana hasła
+                        li#logout-btn
+                            | Wyloguj
 
     section.panel-content.container-fluid
         div.content-wrapper.row
@@ -32,5 +38,7 @@ aside#black-dialog
         | Trwa dodawanie zbioru danych...
     h2#black-dialog-desc
         | 0 / 100 (0 %)
+
+
 
 script(src="js/panel.js")

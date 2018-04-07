@@ -6,6 +6,12 @@ const DatasetImageSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
+    width: {
+        type: Number
+    },
+    height: {
+        type: Number
+    },
     dataset: {
         type: String
     },

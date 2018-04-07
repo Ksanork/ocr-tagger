@@ -1,8 +1,34 @@
-let dataset_id = null;
-let sumbittedImages = 0, uploadedImages = 0;
+if(typeof dataset_id == "undefined" || typeof sumbittedImages == "undefined" ||
+    typeof uploadedImages == "undefined") {
+    window.dataset_id = null;
+    window.sumbittedImages = 0;
+    window.uploadedImages = 0;
+}
 
 $(() => {
-    console.log("initPanel");
+
+    // ustawienia usera
+    $("#username-wrapper").click(() => {
+       $("#user-settings").fadeIn(200);
+
+       $("#logout-btn").click(() => {
+           console.log("logout");
+          $.post("/logout").done((data) => {
+             let json = JSON.parse(data);
+
+              if(json.status == "true") {
+                  $("#content-wrapper").fadeOut(300, () => {
+                      $("#content-wrapper").html(json.html).fadeIn(300);
+                  });
+              }
+
+          });
+       });
+
+       $("#user-settings").mouseleave(() => {
+           $("#user-settings").fadeOut(400);
+        });
+    });
 
     initDatasetButtonsEvents();
 
@@ -105,6 +131,11 @@ function sendDataset(fileUploader) {
     });
 }
 
+function closeWhiteDialog() {
+    $("#white-aside").fadeOut(200);
+    refreshDatasets();
+}
+
 function refreshDatasets() {
     console.log("refresh");
 
@@ -114,34 +145,60 @@ function refreshDatasets() {
         let json = JSON.parse(data);
         $("#datasets").html(json.html);
         initDatasetButtonsEvents();
-
     });
 }
 
 function startTagging(dataset_id) {
     $.post("/get-dataset-image", {
         dataset_id: dataset_id
-    }).done((data) => {
-        console.log("ahoj");
+    }).done((data, status) => {
+        console.log(status);
+        if(status != "success") {
+            closeWhiteDialog();
+            return;
+        }
+
         let json = JSON.parse(data);
+
+        console.log(json.html);
+
 
         if(!$("#white-aside").hasClass("tagging-form"))
             $("#white-aside").addClass("tagging-form");
 
         $("#white-aside").html(json.html);
+
         $("#white-aside").fadeIn(200, () => {
+            let img = new Image();
             let parentWidth = $("#white-aside").width() * 0.75;
             let parentHeight = $("#white-aside").height() * 0.75;
 
-            if($("#tagging-image").width() < $("#tagging-image").height()) {
-                if($("#tagging-image").width() > parentWidth)
-                    $("#tagging-image").width(parentWidth);
+            console.log(parentHeight);
+            console.log(parentWidth);
+            console.log(json.width);
+            console.log(json.height);
+
+            if(json.width < json.height) {
+                $(img).height(parentHeight);
+
+                // if(json.width > parentWidth)
             }
             else {
-                if($("#tagging-image").height() > parentHeight) {
-                    $("#tagging-image").height(parentHeight);
-                }
+                console.log("!");
+                console.log(parentWidth * json.width / json.height);
+                if((parentWidth * json.width / json.height) > json.height)
+                    $(img).height(parentHeight);
+                else
+                    $(img).width(parentWidth);
+                // }
             }
+            // });
+            img.src = json.src;
+
+            $("#image-wrapper").append(img);
+            // $(img).animate({
+            //     opacity: 1.0
+            // }, 300);
         });
 
         $("#tagging-submit-btn").click((event) => {
@@ -152,17 +209,19 @@ function startTagging(dataset_id) {
                 tag: $("#inputTag").val()
             }).done((data) => {
                 if(data == "true") {
-                    console.log("okkkkkk");
+                    console.log("Dodanto tag");
                     startTagging(dataset_id);
                 }
             });
-
-
         });
 
         $("#close-form-button").click(() => {
             $("#white-aside").fadeOut(200);
             refreshDatasets();
         });
+    })
+    .fail((data, status) => {
+        console.log("fail");
+        closeWhiteDialog();
     });
 }

@@ -1,11 +1,34 @@
 "use strict";
 
-var dataset_id = null;
-var sumbittedImages = 0,
-    uploadedImages = 0;
+if (typeof dataset_id == "undefined" || typeof sumbittedImages == "undefined" || typeof uploadedImages == "undefined") {
+    window.dataset_id = null;
+    window.sumbittedImages = 0;
+    window.uploadedImages = 0;
+}
 
 $(function () {
-    console.log("initPanel");
+
+    // ustawienia usera
+    $("#username-wrapper").click(function () {
+        $("#user-settings").fadeIn(200);
+
+        $("#logout-btn").click(function () {
+            console.log("logout");
+            $.post("/logout").done(function (data) {
+                var json = JSON.parse(data);
+
+                if (json.status == "true") {
+                    $("#content-wrapper").fadeOut(300, function () {
+                        $("#content-wrapper").html(json.html).fadeIn(300);
+                    });
+                }
+            });
+        });
+
+        $("#user-settings").mouseleave(function () {
+            $("#user-settings").fadeOut(400);
+        });
+    });
 
     initDatasetButtonsEvents();
 
@@ -107,6 +130,11 @@ function sendDataset(fileUploader) {
     });
 }
 
+function closeWhiteDialog() {
+    $("#white-aside").fadeOut(200);
+    refreshDatasets();
+}
+
 function refreshDatasets() {
     console.log("refresh");
 
@@ -122,24 +150,48 @@ function refreshDatasets() {
 function startTagging(dataset_id) {
     $.post("/get-dataset-image", {
         dataset_id: dataset_id
-    }).done(function (data) {
-        console.log("ahoj");
+    }).done(function (data, status) {
+        console.log(status);
+        if (status != "success") {
+            closeWhiteDialog();
+            return;
+        }
+
         var json = JSON.parse(data);
+
+        console.log(json.html);
 
         if (!$("#white-aside").hasClass("tagging-form")) $("#white-aside").addClass("tagging-form");
 
         $("#white-aside").html(json.html);
+
         $("#white-aside").fadeIn(200, function () {
+            var img = new Image();
             var parentWidth = $("#white-aside").width() * 0.75;
             var parentHeight = $("#white-aside").height() * 0.75;
 
-            if ($("#tagging-image").width() < $("#tagging-image").height()) {
-                if ($("#tagging-image").width() > parentWidth) $("#tagging-image").width(parentWidth);
+            console.log(parentHeight);
+            console.log(parentWidth);
+            console.log(json.width);
+            console.log(json.height);
+
+            if (json.width < json.height) {
+                $(img).height(parentHeight);
+
+                // if(json.width > parentWidth)
             } else {
-                if ($("#tagging-image").height() > parentHeight) {
-                    $("#tagging-image").height(parentHeight);
-                }
+                console.log("!");
+                console.log(parentWidth * json.width / json.height);
+                if (parentWidth * json.width / json.height > json.height) $(img).height(parentHeight);else $(img).width(parentWidth);
+                // }
             }
+            // });
+            img.src = json.src;
+
+            $("#image-wrapper").append(img);
+            // $(img).animate({
+            //     opacity: 1.0
+            // }, 300);
         });
 
         $("#tagging-submit-btn").click(function (event) {
@@ -150,7 +202,7 @@ function startTagging(dataset_id) {
                 tag: $("#inputTag").val()
             }).done(function (data) {
                 if (data == "true") {
-                    console.log("okkkkkk");
+                    console.log("Dodanto tag");
                     startTagging(dataset_id);
                 }
             });
@@ -160,6 +212,9 @@ function startTagging(dataset_id) {
             $("#white-aside").fadeOut(200);
             refreshDatasets();
         });
+    }).fail(function (data, status) {
+        console.log("fail");
+        closeWhiteDialog();
     });
 }
 //# sourceMappingURL=panel.js.map

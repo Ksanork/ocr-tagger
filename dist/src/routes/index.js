@@ -16,6 +16,10 @@ var _fs = require('fs');
 
 var _fs2 = _interopRequireDefault(_fs);
 
+var _imageSize = require('image-size');
+
+var _imageSize2 = _interopRequireDefault(_imageSize);
+
 var _DBO = require('../models/DBO');
 
 var _DBO2 = _interopRequireDefault(_DBO);
@@ -46,9 +50,17 @@ var upload = (0, _multer2.default)({
 
 var authorise = function authorise(req, res, next) {
     if (req.session.auth && req.session.authUser) {
+
+        // let datasets =  dbo.getDatasetsWithCounts2();
+
         dbo.getDatasetsWithCounts(function (datasets) {
+            datasets.forEach(function (elem) {
+                console.log("get " + elem.countTagged + " / " + elem.countAll);
+            });
+
             res.render('panel', { username: req.session.authUser, isAdmin: req.session.isAdmin, datasets: datasets });
         });
+
         // next();
         // res.render("panel", { username: req.session.authUser, isAdmin: req.session.isAdmin });
     } else {
@@ -75,6 +87,10 @@ router.post("/login", authorise, function (req, res, next) {
             console.log("auth ok - " + req.session.authUser);
 
             dbo.getDatasetsWithCounts(function (datasets) {
+                datasets.forEach(function (elem) {
+                    console.log("get " + elem.countTagged + " / " + elem.countAll);
+                });
+
                 res.render('panel-partial', { username: user.name, isAdmin: user.isAdmin, datasets: datasets }, function (err, output) {
                     console.log("res");
                     res.json(JSON.stringify({ status: "true", html: output }));
@@ -130,21 +146,37 @@ router.post("/add-dataset-image", function (req, res) {
                 _fs2.default.mkdirSync(path);
             }
 
-            console.log(req.file.path + " => " + path + " - " + req.file.filename);
+            (0, _imageSize2.default)(req.file.path, function (err, size) {
+                if (!err) {
+                    console.log('width = ' + size.width);
+                    console.log('height = ' + size.height);
 
-            _fs2.default.rename(req.file.path, path + "/" + req.file.filename, function (err) {
-                if (err) throw err;else console.log('Successfully moved');
+                    console.log(req.file.path + " => " + path + " - " + req.file.filename);
+
+                    _fs2.default.rename(req.file.path, path + "/" + req.file.filename, function (err) {
+                        if (err) throw err;else console.log('Successfully moved');
+                    });
+
+                    dbo.addDatasetImage(path + "/" + req.file.filename, req.body.dataset_id, size.width, size.height, function (status) {});
+
+                    res.sendStatus(200);
+                } else {
+                    console.log("Problem z określaniem rozmiaru - " + err);
+                }
             });
-
-            dbo.addDatasetImage(path + "/" + req.file.filename, req.body.dataset_id, function (status) {});
-            res.sendStatus(200);
         }
     });
 });
 
 router.post("/get-datasets", function (req, res) {
     dbo.getDatasetsWithCounts(function (datasets) {
+        datasets.forEach(function (elem) {
+            console.log("get " + elem.countTagged + " / " + elem.countAll);
+        });
+
         res.render('datasets-partial', { datasets: datasets }, function (err, output) {
+            // console.log("get " + da)
+
             res.json(JSON.stringify({ html: output }));
         });
     });
@@ -152,23 +184,39 @@ router.post("/get-datasets", function (req, res) {
 
 router.post("/get-dataset-image", function (req, res) {
     dbo.getNextDatasetImage(req.body.dataset_id, function (datasetImage) {
-        dbo.getOneDatasetsWithCounts(req.body.dataset_id, function (dataset) {
-            res.render('tagging', {
-                dataset: dataset.name,
-                datasetImage_id: datasetImage._id,
-                path: datasetImage.path,
-                countTagged: dataset.countTagged,
-                countAll: dataset.countAll
-            }, function (err, output) {
-                res.json(JSON.stringify({ html: output }));
+        if (datasetImage == null) {
+            console.log("koniec datasetu");
+            res.sendStatus(404);
+        } else {
+            dbo.getOneDatasetsWithCounts(req.body.dataset_id, function (dataset) {
+                res.render('tagging', {
+                    dataset: dataset.name,
+                    datasetImage_id: datasetImage._id,
+                    path: datasetImage.path,
+                    countTagged: dataset.countTagged,
+                    countAll: dataset.countAll
+                }, function (err, output) {
+                    res.json(JSON.stringify({ src: datasetImage.path, width: datasetImage.width,
+                        height: datasetImage.height, html: output }));
+                });
             });
-        });
+        }
     });
 });
 
+// sprawdzać czy jest już otagowany
 router.post("/add-tag", function (req, res) {
     dbo.addTag(req.body.datasetImage_id, req.session.userId, req.body.tag, function (status) {
         if (status) res.send("true");
+    });
+});
+
+router.post("/logout", function (req, res) {
+    console.log("logout");
+
+    req.session.destroy();
+    res.render('login-partial', function (err, output) {
+        res.json(JSON.stringify({ status: "true", html: output }));
     });
 });
 

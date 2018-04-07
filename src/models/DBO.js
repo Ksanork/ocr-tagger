@@ -45,10 +45,12 @@ export default class DBO {
         });
     }
 
-    addDatasetImage(path, dataset_id, callback) {
+    addDatasetImage(path, dataset_id, width, height, callback) {
         DatasetImage.create({
             path: path,
-            dataset: dataset_id
+            dataset: dataset_id,
+            width: width,
+            height: height
         }, (err, user) => {
             // console.log("callback");
             if(err) {
@@ -62,40 +64,87 @@ export default class DBO {
         });
     }
 
+    getDatasetsWithCounts2(callback) {
+        let that = this;
+        Dataset.find({}, (err, datasets) => {
+            if(err)
+                console.log("problem z getDatasets2");
+            else {
+                console.log(
+                    "------ get datasets2 ---"
+                );
+
+                // let di = [];
+
+
+                console.log("length " + datasets.length);
+                let j = 0;
+
+                datasets.forEach((dataset, i) => {
+                   that.getOneDatasetsWithCounts(dataset._id, (dataset) => {
+                       j++;
+                       if(j == datasets.length - 1)
+                            callback(datasets);
+                   });
+                });
+
+            }
+        });
+    }
+
     getDatasetsWithCounts(callback) {
         let that = this;
         Dataset.find({}, (err, datasets) => {
-           if(err)
-               console.log("problem z getDatasets");
-           else {
-               // console.log(datasets);
+            if(err)
+                console.log("problem z getDatasets");
+            else {
+                console.log(
+                    "------ get datasets ---"
+                );
 
-               if(datasets.length == 0) {
-                   callback(datasets);
-                   return;
-               }
-               datasets.forEach((dataset, i) => {
-                   let all = 0, tagged = 0;
+                let di = [];
 
-                   // console.log(dataset._id);
-                   that.getAllCountsOfDataset(dataset._id, (count) => {
-                       all = count;
 
-                       that.getTaggedCountsOfDataset(dataset._id, (count) => {
-                           tagged = count;
+                console.log("length " + datasets.length);
 
-                           dataset.countAll = all;
-                           dataset.countTagged = tagged;
+                if(datasets.length == 0) {
+                    console.log("callback 1");
+                    callback(datasets);
+                    return;
+                }
 
-                           if(i == datasets.length-1)
-                               callback(datasets);
-                           console.log(dataset.name + " - " + tagged + "/" + all);
-                       });
-                   });
+                let j = 0;
+                datasets.forEach((dataset, i) => {
+                    let all = 0, tagged = 0;
 
-               });
+                    // console.log(dataset._id);
+                    that.getAllCountsOfDataset(dataset._id, (count) => {
+                        all = count;
 
-           }
+                        that.getTaggedCountsOfDataset(dataset._id, (count) => {
+                            tagged = count;
+
+                            di.push({
+                                countAll: all,
+                                countTagged: tagged
+                            })
+
+                            dataset.countAll = all;
+                            dataset.countTagged = tagged;
+
+                            if(j++ == datasets.length-1) {
+                                console.log("callback 2");
+
+                                callback(datasets);
+                                return;
+                            }
+                            console.log(dataset.name + " - " + tagged + "/" + all);
+                        });
+                    });
+
+                });
+
+            }
         });
     }
 
@@ -128,25 +177,25 @@ export default class DBO {
                 //     return;
                 // }
                 // datasets.forEach((dataset, i) => {
-                    let all = 0, tagged = 0;
+                let all = 0, tagged = 0;
 
-                    // console.log(dataset._id);
-                    that.getAllCountsOfDataset(dataset._id, (count) => {
-                        all = count;
+                // console.log(dataset._id);
+                that.getAllCountsOfDataset(dataset._id, (count) => {
+                    all = count;
 
-                        that.getTaggedCountsOfDataset(dataset._id, (count) => {
-                            tagged = count;
+                    that.getTaggedCountsOfDataset(dataset._id, (count) => {
+                        tagged = count;
 
-                            dataset.countAll = all;
-                            dataset.countTagged = tagged;
+                        dataset.countAll = all;
+                        dataset.countTagged = tagged;
 
-                            // if(i == datasets.length-1)
-                            callback(dataset);
-                            console.log(dataset.name + " - " + tagged + "/" + all);
-                        });
+                        // if(i == datasets.length-1)
+                        callback(dataset);
+                        console.log(dataset.name + " - " + tagged + "/" + all);
                     });
+                });
 
-                }
+            }
 
             // }
         });
@@ -160,9 +209,9 @@ export default class DBO {
             tag: '',
             problem: ''
         }, (err, datasetImage) => {
-           if(err) throw err;
+            if(err) throw err;
 
-           callback(datasetImage);
+            callback(datasetImage);
         });
     }
 
@@ -214,10 +263,10 @@ export default class DBO {
         User.findOne({
             name: name
         }, (err, user) => {
-           if(err || !user) {
-               callback(false, user);
-               return;
-           }
+            if(err || !user) {
+                callback(false, user);
+                return;
+            }
 
             bcrypt.compare(password, user.password, (err, res) => {
                 if(res) {

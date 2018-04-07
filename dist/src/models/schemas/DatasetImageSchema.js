@@ -16,6 +16,12 @@ var DatasetImageSchema = new _mongoose2.default.Schema({
         required: true,
         trim: true
     },
+    width: {
+        type: Number
+    },
+    height: {
+        type: Number
+    },
     dataset: {
         type: String
     },
